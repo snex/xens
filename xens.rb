@@ -38,7 +38,7 @@ end
 get /^\/([A-Za-z0-9\-_]{5}$)/ do |q|
   short_url = ShortURL.find_by_url_hash q
   if short_url
-    redirect short_url.url
+    erb "<script>window.onload = function() { if (window != top) top.location.href = '#{short_url.url}'; }</script>"
   else
     redirect '/'
   end
