@@ -5,6 +5,7 @@ require 'sinatra/redirect_with_flash'
 require './environments'
 
 enable :sessions
+disable :protection
 
 class ShortURL < ActiveRecord::Base
 
