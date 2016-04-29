@@ -1,5 +1,5 @@
 configure :development do
-  set :database, 'sqlite:///dev.db'
+  set :database, { adapter: 'sqlite3', database: 'db/dev.db' }
   set :show_exceptions, true
 end
 

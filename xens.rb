@@ -1,8 +1,8 @@
 require 'sinatra'
-require 'sinatra/activerecord'
 require 'sinatra/flash'
 require 'sinatra/redirect_with_flash'
-require './environments'
+require 'sinatra/activerecord'
+require_relative './environments'
 
 enable :sessions
 disable :protection
@@ -38,7 +38,7 @@ end
 get /^\/([A-Za-z0-9\-_]{5}$)/ do |q|
   short_url = ShortURL.find_by_url_hash q
   if short_url
-    erb "<script>window.onload = function() { if (window != top) top.location.href = '#{short_url.url}'; }</script>"
+    redirect short_url.url
   else
     redirect '/'
   end
