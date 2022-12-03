@@ -1,0 +1,20 @@
+{% block content %}
+  <html>
+    <head>
+      <script type="text/javascript">
+        function copyToClipboard() {
+          var copyText = document.getElementById('newURL');
+          copyText.select();
+          copyText.setSelectionRange(0, 99999);
+          navigator.clipboard.writeText(copyText.value);
+        }
+      </script>
+    </head>
+    <body>
+      <input type="text" id="newURL" value="http://xens.org/{{ new_url }}">
+      <button onclick="copyToClipboard()">Copy</button>
+      <br/>
+      <a href="/">Home</a>
+    </body>
+  </html>
+{% endblock content %}
