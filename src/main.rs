@@ -1,7 +1,11 @@
+use std::env;
+
 #[macro_use] extern crate rocket;
 use rocket::form::Form;
 use rocket::fs::NamedFile;
 use rocket::response::Redirect;
+use rocket::serde::json::{Json, Value, json};
+use rocket::serde::{Serialize, Deserialize};
 
 extern crate rocket_dyn_templates;
 use rocket_dyn_templates::{Template, context};
@@ -40,12 +44,27 @@ struct UrlForm {
     url: String
 }
 
-#[post("/new", data = "<data>")]
+#[post("/", data = "<data>")]
 fn new(data: Form<UrlForm>) -> Template {
     let new_key = generate_key();
     add_key_to_redis(new_key.clone(), data.url.clone());
 
-    Template::render("new", context! { new_url: new_key.clone() })
+    Template::render("new", context! { host: env::var("XENS_HOST").expect("XENS_HOST missing"), new_url: new_key.clone() })
+}
+
+#[derive(Serialize, Deserialize)]
+#[serde(crate = "rocket::serde")]
+struct UrlJson {
+    url: String
+}
+
+#[post("/n.json", format = "json", data = "<data>")]
+fn new_json(data: Json<UrlJson>) -> Value {
+    let new_key = generate_key();
+    add_key_to_redis(new_key.clone(), data.url.to_string());
+    let new_url = format!("{}/{}", env::var("XENS_HOST").expect("XENS_HOST missing"), new_key.clone());
+
+    json!({ "url": new_url })
 }
 
 fn get_key_from_redis(key: String) -> Option<String> {
@@ -68,6 +87,7 @@ fn rocket() -> _ {
     rocket::build()
         .mount("/", routes![index])
         .mount("/", routes![new])
+        .mount("/", routes![new_json])
         .mount("/", routes![redir])
         .attach(Template::fairing())
 }
