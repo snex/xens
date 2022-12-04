@@ -35,7 +35,7 @@ fn add_key_to_redis(new_key: String, url: String) -> Option<()> {
     redis::pipe()
         .atomic()
         .cmd("SET").arg(new_key.clone()).arg(url).ignore()
-        .cmd("EXPIRE").arg(new_key.clone()).arg(60 * 60 * 24 * 7)
+        .cmd("EXPIRE").arg(new_key).arg(60 * 60 * 24 * 7)
         .query(&mut con).ok()?
 }
 
@@ -49,7 +49,7 @@ fn new(data: Form<UrlForm>) -> Template {
     let new_key = generate_key();
     add_key_to_redis(new_key.clone(), data.url.clone());
 
-    Template::render("new", context! { host: env::var("XENS_HOST").expect("XENS_HOST missing"), new_url: new_key.clone() })
+    Template::render("new", context! { host: env::var("XENS_HOST").expect("XENS_HOST missing"), new_url: new_key })
 }
 
 #[derive(Serialize, Deserialize)]
@@ -62,7 +62,7 @@ struct UrlJson {
 fn new_json(data: Json<UrlJson>) -> Value {
     let new_key = generate_key();
     add_key_to_redis(new_key.clone(), data.url.to_string());
-    let new_url = format!("{}/{}", env::var("XENS_HOST").expect("XENS_HOST missing"), new_key.clone());
+    let new_url = format!("{}/{}", env::var("XENS_HOST").expect("XENS_HOST missing"), new_key);
 
     json!({ "url": new_url })
 }
@@ -71,13 +71,13 @@ fn get_key_from_redis(key: String) -> Option<String> {
     let key = format!("xens:{}", key);
     let client = redis::Client::open("redis://127.0.0.1/").ok()?;
     let mut con = client.get_connection().ok()?;
-    redis::cmd("GET").arg(key.clone()).query(&mut con).ok()?
+    redis::cmd("GET").arg(key).query(&mut con).ok()?
 }
 
 #[get("/<key>")]
 fn redir(key: String) -> Redirect {
     match get_key_from_redis(key) {
-      Some(url) => Redirect::to(format!("{}", url)),
+      Some(url) => Redirect::to(url),
       None      => Redirect::to("/")
     }
 }

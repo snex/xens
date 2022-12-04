@@ -11,7 +11,7 @@
       </script>
     </head>
     <body>
-      <input type="text" id="newURL" value="https://xens.org/{{ new_url }}">
+      <input type="text" id="newURL" value="{{ host }}/{{ new_url }}">
       <button onclick="copyToClipboard()">Copy</button>
       <br/>
       <a href="/">Home</a>
