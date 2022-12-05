@@ -15,6 +15,8 @@
       <button onclick="copyToClipboard()">Copy</button>
       <br/>
       <a href="/">Home</a>
+      <p>This service is provided at no charge and is open to the public. The proprietors are not responsible for any links shortened using this service.</p>
+      <p>Try the <a href="https://github.com/snex/xens-extension" target="_new">Chrome Extension</a>.
     </body>
   </html>
 {% endblock content %}
