@@ -30,7 +30,7 @@ fn generate_key() -> String {
 
 fn add_key_to_redis(new_key: String, url: String) -> Option<()> {
     let new_key = format!("xens:{}", new_key);
-    let client = redis::Client::open("redis://127.0.0.1/").ok()?;
+    let client = redis::Client::open(env::var("REDIS_URI").expect("REDIS_URI missing")).ok()?;
     let mut con = client.get_connection().ok()?;
     redis::pipe()
         .atomic()
@@ -69,7 +69,7 @@ fn new_json(data: Json<UrlJson>) -> Value {
 
 fn get_key_from_redis(key: String) -> Option<String> {
     let key = format!("xens:{}", key);
-    let client = redis::Client::open("redis://127.0.0.1/").ok()?;
+    let client = redis::Client::open(env::var("REDIS_URI").expect("REDIS_URI missing")).ok()?;
     let mut con = client.get_connection().ok()?;
     redis::cmd("GET").arg(key).query(&mut con).ok()?
 }
