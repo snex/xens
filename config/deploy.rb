@@ -13,7 +13,7 @@ require 'mina/rails'
 #   branch       - Branch name to deploy. (needed by mina/git)
 
 set :application_name, 'xens'
-set :domain, '127.0.0.1'
+set :domain, 'httpd.local'
 set :deploy_to, '/var/www/xens'
 set :repository, 'https://github.com/snex/xens.git'
 set :branch, 'master'
